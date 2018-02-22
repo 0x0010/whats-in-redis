@@ -2,14 +2,16 @@ package main
 
 import (
 	"net/http"
-	"io"
+	"github.com/0x0010/whats-in-redis/httphandlers"
 )
 
-func main() {
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
-}
+// register http handlers
+var handlers = []httphandler.HttpHandler{new(httphandler.IconHandler), new(httphandler.IndexHandler)}
 
-func handler(w http.ResponseWriter, request *http.Request) {
-	io.WriteString(w, "Hello World!")
+func main() {
+
+	for _, handler := range handlers {
+		http.HandleFunc(handler.GetHandlerPath(), handler.GetHandlerFunc())
+	}
+	http.ListenAndServe(":8080", nil)
 }
